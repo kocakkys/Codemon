@@ -1,0 +1,58 @@
+name: codemon2
+description: Codemon - coding learning RPG.
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  image_picker: ^1.1.2
+  audioplayers: ^6.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/backgrounds/home_bg.png
+    - assets/backgrounds/computer_bg.png
+    - assets/backgrounds/store_bg.png
+    - assets/backgrounds/bag_bg.png
+    - assets/backgrounds/battle_bg.png
+    - assets/world/html_bg.png
+    - assets/world/css_bg.png
+    - assets/world/javascript_bg.png
+    - assets/world/tower.png
+    - assets/enemies/html_slime.png
+    - assets/enemies/html_goblin.png
+    - assets/enemies/html_dragon.png
+    - assets/enemies/css_slime.png
+    - assets/enemies/css_goblin.png
+    - assets/enemies/css_dragon.png
+    - assets/enemies/javascript_slime.png
+    - assets/enemies/javascript_goblin.png
+    - assets/enemies/javascript_dragon.png
+    - assets/codemons/html_slime.png
+    - assets/codemons/html_goblin.png
+    - assets/codemons/html_dragon.png
+    - assets/codemons/css_slime.png
+    - assets/codemons/css_goblin.png
+    - assets/codemons/css_dragon.png
+    - assets/codemons/javascript_slime.png
+    - assets/codemons/javascript_goblin.png
+    - assets/codemons/javascript_dragon.png
+    - assets/audio/click.wav
+    - assets/audio/countdown.wav
+    - assets/audio/correct.wav
+    - assets/audio/wrong.wav
+    - assets/audio/attack.wav
+    - assets/audio/victory.wav
+    - assets/audio/defeat.wav
