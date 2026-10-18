@@ -263,7 +263,7 @@ class _ComputerScreenState extends State<ComputerScreen> {
                 ),
                 padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(.45),
+                  color: Colors.black.withValues(alpha: .45),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -373,7 +373,7 @@ class _CodemonCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(.55),
+        color: Colors.black.withValues(alpha: .55),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: equipped ? Colors.greenAccent : Colors.white12,
@@ -414,7 +414,7 @@ class _CodemonCard extends StatelessWidget {
               vertical: 4,
             ),
             decoration: BoxDecoration(
-              color: Colors.amber.withOpacity(.15),
+              color: Colors.amber.withValues(alpha: .15),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(

@@ -113,8 +113,8 @@ class _WorldScreenState extends State<WorldScreen>
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: requirement.completed
-                          ? Colors.green.withOpacity(.10)
-                          : Colors.black.withOpacity(.05),
+                          ? Colors.green.withValues(alpha: .10)
+                          : Colors.black.withValues(alpha: .05),
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
                         color: requirement.completed
@@ -228,7 +228,7 @@ class _WorldScreenState extends State<WorldScreen>
           },
         ),
         Container(
-          color: Colors.black.withOpacity(.18),
+          color: Colors.black.withValues(alpha: .18),
         ),
         SafeArea(
           child: SingleChildScrollView(
@@ -369,10 +369,10 @@ class _WorldSection extends StatelessWidget {
         18,
       ),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(.38),
+        color: Colors.black.withValues(alpha: .38),
         borderRadius: BorderRadius.circular(26),
         border: Border.all(
-          color: unlocked ? color.withOpacity(.55) : Colors.white12,
+          color: unlocked ? color.withValues(alpha: .55) : Colors.white12,
           width: 2,
         ),
       ),
@@ -384,7 +384,7 @@ class _WorldSection extends StatelessWidget {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(.18),
+                  color: color.withValues(alpha: .18),
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: color,
@@ -432,7 +432,7 @@ class _WorldSection extends StatelessWidget {
             height: 70,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(.35),
+              color: Colors.black.withValues(alpha: .35),
               borderRadius: BorderRadius.circular(18),
             ),
             child: Stack(
@@ -442,7 +442,7 @@ class _WorldSection extends StatelessWidget {
                   height: 32,
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: color.withOpacity(.30),
+                    color: color.withValues(alpha: .30),
                     borderRadius: const BorderRadius.vertical(
                       bottom: Radius.circular(18),
                     ),
@@ -454,12 +454,12 @@ class _WorldSection extends StatelessWidget {
                   height: 55,
                   width: 170,
                   decoration: BoxDecoration(
-                    color: color.withOpacity(.25),
+                    color: color.withValues(alpha: .25),
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(15),
                     ),
                     border: Border.all(
-                      color: color.withOpacity(.50),
+                      color: color.withValues(alpha: .50),
                       width: 2,
                     ),
                   ),
@@ -471,7 +471,7 @@ class _WorldSection extends StatelessWidget {
                     width: 90,
                     height: 12,
                     decoration: BoxDecoration(
-                      color: color.withOpacity(.5),
+                      color: color.withValues(alpha: .5),
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
@@ -541,10 +541,10 @@ class _WorldSection extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(.12),
+                color: Colors.green.withValues(alpha: .12),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: Colors.greenAccent.withOpacity(.5),
+                  color: Colors.greenAccent.withValues(alpha: .5),
                 ),
               ),
               child: const Row(
@@ -622,7 +622,7 @@ class _FloatingEnemy extends StatelessWidget {
                 width: 105,
                 padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(.35),
+                  color: Colors.black.withValues(alpha: .35),
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: unlocked ? color : Colors.white24,
@@ -630,7 +630,7 @@ class _FloatingEnemy extends StatelessWidget {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: color.withOpacity(.20),
+                      color: color.withValues(alpha: .20),
                       blurRadius: 15,
                       spreadRadius: 2,
                     ),

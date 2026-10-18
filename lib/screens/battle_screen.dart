@@ -658,7 +658,7 @@ class _BattleScreenState extends State<BattleScreen>
 
     showDialog(
       context: context,
-      barrierColor: Colors.black.withOpacity(.65),
+      barrierColor: Colors.black.withValues(alpha: .65),
       builder: (context) {
         return AlertDialog(
           backgroundColor: const Color(0xFFF5F7FF),
@@ -700,7 +700,7 @@ class _BattleScreenState extends State<BattleScreen>
                       width: 55,
                       height: 55,
                       decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(.12),
+                        color: Colors.blue.withValues(alpha: .12),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: const Icon(
@@ -866,7 +866,7 @@ class _BattleScreenState extends State<BattleScreen>
           ),
 
           Container(
-            color: Colors.black.withOpacity(.16),
+            color: Colors.black.withValues(alpha: .16),
           ),
 
           SafeArea(
@@ -1144,7 +1144,7 @@ class _BattleScreenState extends State<BattleScreen>
                           width: 165,
                           height: 165,
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(.72),
+                            color: Colors.black.withValues(alpha: .72),
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: Colors.white24,
@@ -1198,8 +1198,8 @@ class _BattleScreenState extends State<BattleScreen>
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(.35),
+                                            color: Colors.black
+                                                .withValues(alpha: .35),
                                             blurRadius: 10,
                                             offset: const Offset(
                                               0,
@@ -1261,7 +1261,8 @@ class _BattleScreenState extends State<BattleScreen>
                                     ),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(.35),
+                                        color:
+                                            Colors.black.withValues(alpha: .35),
                                         blurRadius: 8,
                                         offset: const Offset(
                                           0,
@@ -1374,7 +1375,7 @@ class _QuestionPopup extends StatelessWidget {
 
     return Positioned.fill(
       child: Container(
-        color: Colors.black.withOpacity(.60),
+        color: Colors.black.withValues(alpha: .60),
         alignment: Alignment.center,
         padding: const EdgeInsets.all(18),
         child: Material(
@@ -1583,7 +1584,7 @@ class _PlayerAvatar extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(.35),
+                color: Colors.black.withValues(alpha: .35),
                 blurRadius: 10,
                 offset: const Offset(0, 5),
               ),
@@ -1664,8 +1665,8 @@ class _BattleCodemon extends StatelessWidget {
         padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
           color: canAttack
-              ? Colors.green.withOpacity(.20)
-              : Colors.black.withOpacity(.25),
+              ? Colors.green.withValues(alpha: .20)
+              : Colors.black.withValues(alpha: .25),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: canAttack ? Colors.greenAccent : Colors.white12,
@@ -1820,7 +1821,7 @@ class _SlicePainter extends CustomPainter {
 
     final opacity = (1.0 - progress).clamp(0.0, 1.0);
 
-    paint.color = Colors.white.withOpacity(opacity);
+    paint.color = Colors.white.withValues(alpha: opacity);
 
     final w = size.width;
     final h = size.height;

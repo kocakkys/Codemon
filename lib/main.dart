@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 
+import 'firebase_options.dart';
 import 'models/game_state.dart';
 import 'screens/bag_screen.dart';
 import 'screens/computer_screen.dart';
@@ -7,7 +9,13 @@ import 'screens/home_screen.dart';
 import 'screens/store_screen.dart';
 import 'screens/world_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const App());
 }
 
@@ -54,7 +62,10 @@ class _AppState extends State<App> {
         scaffoldBackgroundColor: const Color(0xFF071225),
       ),
       home: Scaffold(
-        body: IndexedStack(index: currentIndex, children: pages),
+        body: IndexedStack(
+          index: currentIndex,
+          children: pages,
+        ),
         bottomNavigationBar: NavigationBar(
           selectedIndex: currentIndex,
           onDestinationSelected: (index) {

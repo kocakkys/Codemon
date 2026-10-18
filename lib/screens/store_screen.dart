@@ -36,7 +36,6 @@ class StoreScreen extends StatelessWidget {
             return Container(color: const Color(0xFF071225));
           },
         ),
-
         SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(20),
@@ -46,9 +45,7 @@ class StoreScreen extends StatelessWidget {
                   'STORE',
                   style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900),
                 ),
-
                 const SizedBox(height: 10),
-
                 Text(
                   'COIN  ${game.coins}',
                   style: const TextStyle(
@@ -57,13 +54,11 @@ class StoreScreen extends StatelessWidget {
                     fontSize: 18,
                   ),
                 ),
-
                 const SizedBox(height: 30),
-
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(.55),
+                    color: Colors.black.withValues(alpha: .55),
                     borderRadius: BorderRadius.circular(25),
                   ),
                   child: Column(
@@ -73,9 +68,7 @@ class StoreScreen extends StatelessWidget {
                         size: 100,
                         color: Colors.redAccent,
                       ),
-
                       const SizedBox(height: 15),
-
                       const Text(
                         'HEAL POTION',
                         style: TextStyle(
@@ -83,16 +76,12 @@ class StoreScreen extends StatelessWidget {
                           fontWeight: FontWeight.w900,
                         ),
                       ),
-
                       const SizedBox(height: 5),
-
                       const Text(
                         'Memulihkan 40 HP',
                         style: TextStyle(color: Colors.white60),
                       ),
-
                       const SizedBox(height: 10),
-
                       const Text(
                         '25 COIN',
                         style: TextStyle(
@@ -101,9 +90,7 @@ class StoreScreen extends StatelessWidget {
                           fontSize: 20,
                         ),
                       ),
-
                       const SizedBox(height: 15),
-
                       SizedBox(
                         width: double.infinity,
                         height: 55,

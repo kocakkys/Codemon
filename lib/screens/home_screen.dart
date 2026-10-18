@@ -92,8 +92,8 @@ class _HomeScreenState extends State<HomeScreen> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black.withOpacity(.15),
-                Colors.black.withOpacity(.65),
+                Colors.black.withValues(alpha: .15),
+                Colors.black.withValues(alpha: .65),
               ],
             ),
           ),
@@ -192,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(.45),
+                    color: Colors.black.withValues(alpha: .45),
                     borderRadius: BorderRadius.circular(22),
                     border: Border.all(color: Colors.white24),
                   ),
@@ -221,7 +221,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(.45),
+                    color: Colors.black.withValues(alpha: .45),
                     borderRadius: BorderRadius.circular(22),
                   ),
                   child: Row(
@@ -279,7 +279,7 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(.48),
+        color: Colors.black.withValues(alpha: .48),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: Colors.white12),
       ),

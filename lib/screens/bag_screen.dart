@@ -32,8 +32,8 @@ class BagScreen extends StatelessWidget {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.black.withOpacity(.15),
-                Colors.black.withOpacity(.75),
+                Colors.black.withValues(alpha: .15),
+                Colors.black.withValues(alpha: .75),
               ],
             ),
           ),
@@ -79,7 +79,7 @@ class BagScreen extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(.45),
+                    color: Colors.black.withValues(alpha: .45),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: Colors.white12,
@@ -131,7 +131,7 @@ class _ItemCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(.48),
+        color: Colors.black.withValues(alpha: .48),
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
           color: Colors.white12,
