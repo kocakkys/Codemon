@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'firebase_options.dart';
+import 'splash_screen.dart';
 import 'models/game_state.dart';
 import 'screens/auth_screen.dart';
 import 'screens/bag_screen.dart';
@@ -44,7 +45,9 @@ class CodemonApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF071225),
         useMaterial3: true,
       ),
-      home: const AuthGate(),
+      home: const SplashScreen(
+        nextScreen: AuthGate(),
+      ),
     );
   }
 }

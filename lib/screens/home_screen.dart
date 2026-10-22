@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import '../models/game_state.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -20,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final ImagePicker picker = ImagePicker();
 
+  // Mengubah foto profil player.
   Future<void> changePhoto() async {
     try {
       final file = await picker.pickImage(
@@ -45,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Foto profil berhasil diperbarui!'),
+          content: Text('Foto player berhasil diperbarui!'),
         ),
       );
     } catch (e) {
@@ -59,86 +60,11 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<void> changeName() async {
-    final controller = TextEditingController(
-      text: widget.game.playerName,
-    );
-
-    final result = await showDialog<String>(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Nama Player'),
-          content: TextField(
-            controller: controller,
-            autofocus: true,
-            textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-              hintText: 'Masukkan nama baru',
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-              },
-              child: const Text('BATAL'),
-            ),
-            FilledButton(
-              onPressed: () {
-                Navigator.pop(
-                  dialogContext,
-                  controller.text.trim(),
-                );
-              },
-              child: const Text('SIMPAN'),
-            ),
-          ],
-        );
-      },
-    );
-
-    controller.dispose();
-
-    if (result == null || result.isEmpty || !mounted) {
-      return;
-    }
-
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-
-      if (user != null) {
-        await user.updateDisplayName(result);
-        await user.reload();
-      }
-
-      if (!mounted) return;
-
-      widget.game.playerName = result;
-      widget.onChanged();
-      setState(() {});
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Username berhasil diperbarui!'),
-        ),
-      );
-    } on FirebaseAuthException catch (e) {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Gagal memperbarui username: ${e.message}'),
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final game = widget.game;
 
-    // XP yang dibutuhkan untuk naik ke level berikutnya.
+    // XP untuk level berikutnya.
     final int xpTarget = game.expNeeded;
     final int currentXp = game.exp.clamp(0, xpTarget);
     final double xpProgress =
@@ -147,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Stack(
       fit: StackFit.expand,
       children: [
+        // Background Home.
         Image.asset(
           'assets/backgrounds/home_bg.png',
           fit: BoxFit.cover,
@@ -156,6 +83,8 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
         ),
+
+        // Lapisan gelap agar tulisan mudah dibaca.
         Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -168,21 +97,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
+
         SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(20),
             child: Column(
               children: [
                 const SizedBox(height: 15),
-                const Text(
-                  'CODEMON',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 3,
-                  ),
-                ),
+
                 const SizedBox(height: 5),
+
                 const Text(
                   'CODING ADVENTURE',
                   style: TextStyle(
@@ -190,7 +114,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     letterSpacing: 2,
                   ),
                 ),
+
                 const SizedBox(height: 35),
+
+                // Foto profil player.
                 GestureDetector(
                   onTap: changePhoto,
                   child: CircleAvatar(
@@ -208,20 +135,34 @@ class _HomeScreenState extends State<HomeScreen> {
                         : null,
                   ),
                 ),
-                const SizedBox(height: 15),
+
+                const SizedBox(height: 10),
+
+                // Tombol untuk mengganti foto.
+                TextButton.icon(
+                  onPressed: changePhoto,
+                  icon: const Icon(Icons.camera_alt),
+                  label: const Text('Ubah Foto Player'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color(0xFF64D8FF),
+                  ),
+                ),
+
+                const SizedBox(height: 5),
+
+                // Nama player hanya ditampilkan.
                 Text(
                   game.playerName,
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-                TextButton.icon(
-                  onPressed: changeName,
-                  icon: const Icon(Icons.edit),
-                  label: const Text('Edit Profil'),
-                ),
+
                 const SizedBox(height: 20),
+
+                // Level dan coin.
                 Row(
                   children: [
                     Expanded(
@@ -241,7 +182,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 10),
+
+                // Battle Point dan jumlah Codemon.
                 Row(
                   children: [
                     Expanded(
@@ -261,15 +205,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
+
                 const SizedBox(height: 25),
 
-                // XP BAR - tambahan baru, style mengikuti bar HP.
+                // XP Bar.
                 Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: .45),
                     borderRadius: BorderRadius.circular(22),
-                    border: Border.all(color: Colors.white24),
+                    border: Border.all(
+                      color: Colors.white24,
+                    ),
                   ),
                   child: Column(
                     children: [
@@ -321,15 +268,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 12),
 
-                // PLAYER HP - tetap seperti desain awal.
+                // HP Bar.
                 Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: .45),
                     borderRadius: BorderRadius.circular(22),
-                    border: Border.all(color: Colors.white24),
+                    border: Border.all(
+                      color: Colors.white24,
+                    ),
                   ),
                   child: Column(
                     children: [
@@ -356,7 +306,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
+
                 const SizedBox(height: 15),
+
+                // Coding Journey.
                 Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
@@ -365,7 +318,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.code, size: 42),
+                      const Icon(
+                        Icons.code,
+                        size: 42,
+                      ),
                       const SizedBox(width: 15),
                       Expanded(
                         child: Column(
@@ -422,11 +378,16 @@ class _StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.black.withValues(alpha: .48),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.white12),
+        border: Border.all(
+          color: Colors.white12,
+        ),
       ),
       child: Column(
         children: [
-          Icon(icon, size: 30),
+          Icon(
+            icon,
+            size: 30,
+          ),
           const SizedBox(height: 5),
           Text(
             value,
@@ -437,6 +398,7 @@ class _StatCard extends StatelessWidget {
           ),
           Text(
             title,
+            textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 10,
               color: Colors.white60,
