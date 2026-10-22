@@ -7,7 +7,11 @@ class HomeScreen extends StatefulWidget {
   final GameState game;
   final VoidCallback onChanged;
 
-  const HomeScreen({super.key, required this.game, required this.onChanged});
+  const HomeScreen({
+    super.key,
+    required this.game,
+    required this.onChanged,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -35,7 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
         widget.game.playerPhoto = bytes;
       });
 
-      // Simpan foto dan progres ke Firebase.
       widget.onChanged();
 
       if (!mounted) return;
@@ -102,7 +105,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     try {
-      // Simpan username ke profil akun Firebase.
       final user = FirebaseAuth.instance.currentUser;
 
       if (user != null) {
@@ -112,7 +114,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (!mounted) return;
 
-      // Perbarui nama yang tampil di Home.
       widget.game.playerName = result;
       widget.onChanged();
       setState(() {});
@@ -137,6 +138,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final game = widget.game;
 
+    // XP yang dibutuhkan untuk naik ke level berikutnya.
+    final int xpTarget = game.expNeeded;
+    final int currentXp = game.exp.clamp(0, xpTarget);
+    final double xpProgress =
+        xpTarget > 0 ? (currentXp / xpTarget).clamp(0.0, 1.0) : 0.0;
+
     return Stack(
       fit: StackFit.expand,
       children: [
@@ -144,7 +151,9 @@ class _HomeScreenState extends State<HomeScreen> {
           'assets/backgrounds/home_bg.png',
           fit: BoxFit.cover,
           errorBuilder: (_, __, ___) {
-            return Container(color: const Color(0xFF09152E));
+            return Container(
+              color: const Color(0xFF09152E),
+            );
           },
         ),
         Container(
@@ -176,7 +185,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 5),
                 const Text(
                   'CODING ADVENTURE',
-                  style: TextStyle(color: Colors.white70, letterSpacing: 2),
+                  style: TextStyle(
+                    color: Colors.white70,
+                    letterSpacing: 2,
+                  ),
                 ),
                 const SizedBox(height: 35),
                 GestureDetector(
@@ -250,6 +262,68 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
                 const SizedBox(height: 25),
+
+                // XP BAR - tambahan baru, style mengikuti bar HP.
+                Container(
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: .45),
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(color: Colors.white24),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Row(
+                            children: [
+                              Icon(
+                                Icons.bolt,
+                                color: Color(0xFFFFD54F),
+                                size: 20,
+                              ),
+                              SizedBox(width: 6),
+                              Text(
+                                'PLAYER XP',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text('$currentXp/$xpTarget XP'),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: LinearProgressIndicator(
+                          value: xpProgress,
+                          minHeight: 10,
+                          backgroundColor: Colors.white12,
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                            Color(0xFFFFD54F),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: Text(
+                          '${(xpProgress * 100).toStringAsFixed(0)}% menuju Level ${game.level + 1}',
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // PLAYER HP - tetap seperti desain awal.
                 Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
@@ -264,14 +338,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           const Text(
                             'PLAYER HP',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           Text('${game.hp}/${game.maxHp}'),
                         ],
                       ),
                       const SizedBox(height: 8),
                       LinearProgressIndicator(
-                        value: game.hp / game.maxHp,
+                        value: game.maxHp > 0
+                            ? (game.hp / game.maxHp).clamp(0.0, 1.0)
+                            : 0.0,
                         minHeight: 10,
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -307,7 +385,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   : game.cssUnlocked
                                       ? 'HTML • CSS'
                                       : 'HTML',
-                              style: const TextStyle(color: Colors.white70),
+                              style: const TextStyle(
+                                color: Colors.white70,
+                              ),
                             ),
                           ],
                         ),
@@ -350,11 +430,17 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 5),
           Text(
             value,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w900,
+            ),
           ),
           Text(
             title,
-            style: const TextStyle(fontSize: 10, color: Colors.white60),
+            style: const TextStyle(
+              fontSize: 10,
+              color: Colors.white60,
+            ),
           ),
         ],
       ),

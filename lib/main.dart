@@ -105,6 +105,23 @@ class _GameHomeState extends State<GameHome> {
     _loadProgress();
   }
 
+  @override
+  void didUpdateWidget(covariant GameHome oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final username = widget.username?.trim();
+
+    if (username != null &&
+        username.isNotEmpty &&
+        username != game.playerName) {
+      game.playerName = username;
+
+      if (!_loadingProgress && _loadError == null) {
+        _saveProgress();
+      }
+    }
+  }
+
   Future<void> _loadProgress() async {
     if (!mounted) return;
 
