@@ -1,5 +1,8 @@
 import 'dart:math';
 import 'dart:typed_data';
+import 'dart:convert';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../data/game_data.dart';
 import 'codemon.dart';
@@ -40,10 +43,6 @@ class GameState {
   ];
 
   GameState() {
-    // ==========================================================
-    // STARTER CODEMON
-    // ==========================================================
-
     final starter = createStarterCodemon();
 
     if (starter != null) {
@@ -53,7 +52,139 @@ class GameState {
   }
 
   // ============================================================
-  // STARTER
+  // FIRESTORE: SIMPAN PROGRES
+  // ============================================================
+
+  Map<String, dynamic> toMap() {
+    return {
+      'playerName': playerName,
+      'playerPhoto': playerPhoto == null ? null : base64Encode(playerPhoto!),
+      'level': level,
+      'exp': exp,
+      'maxHp': maxHp,
+      'hp': hp,
+      'coins': coins,
+      'potions': potions,
+      'wins': Map<String, int>.from(wins),
+      'ownedCodemons': ownedCodemons.map((codemon) {
+        return {
+          'uid': codemon.uid,
+          'baseId': codemon.baseId,
+          'name': codemon.name,
+          'language': codemon.language,
+          'image': codemon.image,
+          'damage': codemon.damage,
+          'level': codemon.level,
+        };
+      }).toList(),
+      'activeSlots': List<String?>.from(activeSlots),
+      'updatedAt': FieldValue.serverTimestamp(),
+    };
+  }
+
+  // ============================================================
+  // FIRESTORE: MUAT PROGRES
+  // ============================================================
+
+  void loadFromMap(Map<String, dynamic> data) {
+    playerName = data['playerName'] as String? ?? 'Player';
+
+    final savedPhoto = data['playerPhoto'];
+
+    if (savedPhoto is String && savedPhoto.isNotEmpty) {
+      try {
+        playerPhoto = base64Decode(savedPhoto);
+      } catch (_) {
+        playerPhoto = null;
+      }
+    } else {
+      playerPhoto = null;
+    }
+
+    level = (data['level'] as num?)?.toInt() ?? 1;
+    exp = (data['exp'] as num?)?.toInt() ?? 0;
+
+    maxHp = (data['maxHp'] as num?)?.toInt() ?? 100;
+    hp = (data['hp'] as num?)?.toInt() ?? maxHp;
+
+    coins = (data['coins'] as num?)?.toInt() ?? 100;
+    potions = (data['potions'] as num?)?.toInt() ?? 3;
+
+    // Muat kemenangan.
+    final savedWins = data['wins'];
+
+    if (savedWins is Map) {
+      for (final key in wins.keys.toList()) {
+        wins[key] = (savedWins[key] as num?)?.toInt() ?? 0;
+      }
+    }
+
+    // Muat Codemon yang dimiliki.
+    final savedCodemons = data['ownedCodemons'];
+
+    if (savedCodemons is List) {
+      ownedCodemons.clear();
+
+      for (final item in savedCodemons) {
+        if (item is! Map) continue;
+
+        final codemonData = Map<String, dynamic>.from(item);
+
+        final uid = codemonData['uid'];
+        final baseId = codemonData['baseId'];
+        final name = codemonData['name'];
+        final language = codemonData['language'];
+        final image = codemonData['image'];
+        final damage = codemonData['damage'];
+        final codemonLevel = codemonData['level'];
+
+        if (uid is! String ||
+            baseId is! String ||
+            name is! String ||
+            language is! String ||
+            image is! String ||
+            damage is! num) {
+          continue;
+        }
+
+        ownedCodemons.add(
+          OwnedCodemon(
+            uid: uid,
+            baseId: baseId,
+            name: name,
+            language: language,
+            image: image,
+            damage: damage.toInt(),
+            level: codemonLevel is num ? codemonLevel.toInt() : 1,
+          ),
+        );
+      }
+    }
+
+    // Muat slot Codemon aktif.
+    final savedSlots = data['activeSlots'];
+
+    for (var i = 0; i < activeSlots.length; i++) {
+      if (savedSlots is List && i < savedSlots.length) {
+        final value = savedSlots[i];
+        activeSlots[i] = value is String ? value : null;
+      } else {
+        activeSlots[i] = null;
+      }
+    }
+
+    // Pastikan slot tidak menunjuk Codemon yang sudah tidak ada.
+    for (var i = 0; i < activeSlots.length; i++) {
+      final uid = activeSlots[i];
+
+      if (uid != null && getCodemonByUid(uid) == null) {
+        activeSlots[i] = null;
+      }
+    }
+  }
+
+  // ============================================================
+  // STARTER CODEMON
   // ============================================================
 
   OwnedCodemon? createStarterCodemon() {
@@ -155,14 +286,10 @@ class GameState {
   // LEVEL
   // ============================================================
 
-  int get expNeeded {
-    return level * 100;
-  }
+  int get expNeeded => level * 100;
 
   double get expProgress {
-    if (expNeeded == 0) {
-      return 0;
-    }
+    if (expNeeded == 0) return 0;
 
     return (exp / expNeeded).clamp(0.0, 1.0);
   }
@@ -187,29 +314,13 @@ class GameState {
   // QUEST PROGRESS
   // ============================================================
 
-  int get htmlSlimeWins {
-    return wins['html_slime'] ?? 0;
-  }
+  int get htmlSlimeWins => wins['html_slime'] ?? 0;
+  int get htmlGoblinWins => wins['html_goblin'] ?? 0;
+  int get htmlDragonWins => wins['html_dragon'] ?? 0;
 
-  int get htmlGoblinWins {
-    return wins['html_goblin'] ?? 0;
-  }
-
-  int get htmlDragonWins {
-    return wins['html_dragon'] ?? 0;
-  }
-
-  int get cssSlimeWins {
-    return wins['css_slime'] ?? 0;
-  }
-
-  int get cssGoblinWins {
-    return wins['css_goblin'] ?? 0;
-  }
-
-  int get cssDragonWins {
-    return wins['css_dragon'] ?? 0;
-  }
+  int get cssSlimeWins => wins['css_slime'] ?? 0;
+  int get cssGoblinWins => wins['css_goblin'] ?? 0;
+  int get cssDragonWins => wins['css_dragon'] ?? 0;
 
   // ============================================================
   // EXP
@@ -220,11 +331,8 @@ class GameState {
 
     while (exp >= expNeeded) {
       exp -= expNeeded;
-
       level++;
-
       maxHp += 20;
-
       hp = maxHp;
     }
   }
@@ -239,11 +347,8 @@ class GameState {
     required int rewardExp,
   }) {
     wins[enemyId] = (wins[enemyId] ?? 0) + 1;
-
     coins += rewardCoins;
-
     addExp(rewardExp);
-
     hp = maxHp;
   }
 
@@ -268,16 +373,11 @@ class GameState {
   // ============================================================
 
   bool usePotion() {
-    if (potions <= 0) {
-      return false;
-    }
-
-    if (hp >= maxHp) {
+    if (potions <= 0 || hp >= maxHp) {
       return false;
     }
 
     potions--;
-
     hp += 40;
 
     if (hp > maxHp) {
@@ -288,14 +388,13 @@ class GameState {
   }
 
   bool buyPotion() {
-    const int price = 25;
+    const price = 25;
 
     if (coins < price) {
       return false;
     }
 
     coins -= price;
-
     potions++;
 
     return true;
@@ -313,10 +412,7 @@ class GameState {
   // EQUIP
   // ============================================================
 
-  bool equipCodemon(
-    String uid,
-    int slot,
-  ) {
+  bool equipCodemon(String uid, int slot) {
     if (slot < 0 || slot > 2) {
       return false;
     }
@@ -359,12 +455,9 @@ class GameState {
       return null;
     }
 
-    // Damage random sesuai range Codemon.
-    final damage = randomDamage(definition);
-
     final codemon = createCodemon(
       baseId,
-      damage: damage,
+      damage: randomDamage(definition),
       level: 1,
     );
 
@@ -374,7 +467,6 @@ class GameState {
 
     ownedCodemons.add(codemon);
 
-    // Masukkan otomatis ke slot kalau masih kosong.
     if (activeSlots[0] == null) {
       activeSlots[0] = codemon.uid;
     } else if (activeSlots[1] == null) {
@@ -390,10 +482,7 @@ class GameState {
   // MERGE
   // ============================================================
 
-  bool mergeCodemon(
-    String baseId,
-    int level,
-  ) {
+  bool mergeCodemon(String baseId, int level) {
     final candidates = ownedCodemons
         .where(
           (codemon) =>
@@ -408,24 +497,17 @@ class GameState {
       return false;
     }
 
-    // ==========================================================
-    // TOTAL DAMAGE
-    // ==========================================================
-
     final totalDamage = candidates.fold<int>(
       0,
       (sum, codemon) => sum + codemon.damage,
     );
 
-    // Potong 25% dari total.
     final mergedDamage = (totalDamage * 0.75).floor();
 
-    // Hapus 3 Codemon lama.
     for (final candidate in candidates) {
       ownedCodemons.remove(candidate);
     }
 
-    // Buat Codemon baru.
     final evolved = createCodemon(
       baseId,
       damage: mergedDamage,

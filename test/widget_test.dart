@@ -1,13 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:codemon2/main.dart';
+import 'package:codemon/main.dart';
 
 void main() {
   testWidgets('Codemon app dapat dibuka', (WidgetTester tester) async {
-    await tester.pumpWidget(const App());
+    await tester.pumpWidget(const CodemonApp());
 
     await tester.pump();
 
-    expect(find.byType(App), findsOneWidget);
+    expect(find.byType(CodemonApp), findsOneWidget);
   });
 }

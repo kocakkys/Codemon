@@ -1,4 +1,4 @@
-name: codemon2
+name: codemon
 description: Codemon - coding learning RPG.
 publish_to: "none"
 version: 1.0.0+1
@@ -20,6 +20,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
   flutter_lints: ^5.0.0
 
 flutter:
@@ -31,10 +32,12 @@ flutter:
     - assets/backgrounds/store_bg.png
     - assets/backgrounds/bag_bg.png
     - assets/backgrounds/battle_bg.png
+
     - assets/world/html_bg.png
     - assets/world/css_bg.png
     - assets/world/javascript_bg.png
     - assets/world/tower.png
+
     - assets/enemies/html_slime.png
     - assets/enemies/html_goblin.png
     - assets/enemies/html_dragon.png
@@ -44,6 +47,7 @@ flutter:
     - assets/enemies/javascript_slime.png
     - assets/enemies/javascript_goblin.png
     - assets/enemies/javascript_dragon.png
+
     - assets/codemons/html_slime.png
     - assets/codemons/html_goblin.png
     - assets/codemons/html_dragon.png
@@ -53,6 +57,7 @@ flutter:
     - assets/codemons/javascript_slime.png
     - assets/codemons/javascript_goblin.png
     - assets/codemons/javascript_dragon.png
+
     - assets/audio/click.wav
     - assets/audio/countdown.wav
     - assets/audio/correct.wav
@@ -60,3 +65,14 @@ flutter:
     - assets/audio/attack.wav
     - assets/audio/victory.wav
     - assets/audio/defeat.wav
+
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon/app_icon.png"
+  min_sdk_android: 21
+  web:
+    generate: true
+    image_path: "assets/icon/app_icon.png"
+    background_color: "#101827"
+    theme_color: "#101827"

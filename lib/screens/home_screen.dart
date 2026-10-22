@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/game_state.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,44 +17,76 @@ class _HomeScreenState extends State<HomeScreen> {
   final ImagePicker picker = ImagePicker();
 
   Future<void> changePhoto() async {
-    final file = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 80,
-    );
+    try {
+      final file = await picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 60,
+        maxWidth: 512,
+        maxHeight: 512,
+      );
 
-    if (file == null) {
-      return;
+      if (file == null || !mounted) return;
+
+      final bytes = await file.readAsBytes();
+
+      if (!mounted) return;
+
+      setState(() {
+        widget.game.playerPhoto = bytes;
+      });
+
+      // Simpan foto dan progres ke Firebase.
+      widget.onChanged();
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Foto profil berhasil diperbarui!'),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal memilih foto: $e'),
+        ),
+      );
     }
-
-    widget.game.playerPhoto = await file.readAsBytes();
-
-    widget.onChanged();
-
-    setState(() {});
   }
 
   Future<void> changeName() async {
-    final controller = TextEditingController(text: widget.game.playerName);
+    final controller = TextEditingController(
+      text: widget.game.playerName,
+    );
 
     final result = await showDialog<String>(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Nama Player'),
           content: TextField(
             controller: controller,
-            decoration: const InputDecoration(hintText: 'Masukkan nama'),
+            autofocus: true,
+            textCapitalization: TextCapitalization.words,
+            decoration: const InputDecoration(
+              hintText: 'Masukkan nama baru',
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(dialogContext);
               },
               child: const Text('BATAL'),
             ),
             FilledButton(
               onPressed: () {
-                Navigator.pop(context, controller.text.trim());
+                Navigator.pop(
+                  dialogContext,
+                  controller.text.trim(),
+                );
               },
               child: const Text('SIMPAN'),
             ),
@@ -63,12 +95,41 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
 
-    if (result != null && result.isNotEmpty) {
+    controller.dispose();
+
+    if (result == null || result.isEmpty || !mounted) {
+      return;
+    }
+
+    try {
+      // Simpan username ke profil akun Firebase.
+      final user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        await user.updateDisplayName(result);
+        await user.reload();
+      }
+
+      if (!mounted) return;
+
+      // Perbarui nama yang tampil di Home.
       widget.game.playerName = result;
-
       widget.onChanged();
-
       setState(() {});
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Username berhasil diperbarui!'),
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal memperbarui username: ${e.message}'),
+        ),
+      );
     }
   }
 
